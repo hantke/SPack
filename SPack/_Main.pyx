@@ -17,6 +17,9 @@ cdef extern from "Main.h":
 	
 	void HOD_Group_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat1, double * HOD_Sat2,double * HOD_NHalo,long * Halo_NGal_Full,long * Halo_NGal_Cen,long * Halo_NGal_Sat1,long * Halo_NGal_Sat2, double * Halo_Mass, int NHalos, double Xmin, double Xmax, double NBin)
 	
+	void Gaussian_Smooth_CIC_C(double * A,double * B, double sigma, int sigmaMax, int N1, int N2, int N3)
+	
+	void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmax, double Xmin, double Lbox,int JN, int NCPU, int CPU)
 # create the wrapper code, with numpy type annotations
 
 def Line(
@@ -107,3 +110,37 @@ def HOD_Group(
 		NHalos, Xmin, Xmax, NBin)
 
 
+def Gaussian_Smooth_CIC(
+	np.ndarray[double, ndim=1, mode="c"] A       not None,
+	np.ndarray[double, ndim=1, mode="c"] B       not None,
+	double sigma, int sigmaMax,int N1, int N2, int N3):
+
+	Gaussian_Smooth_CIC_C(
+		<double*>    np.PyArray_DATA(A),
+		<double*>    np.PyArray_DATA(B),
+		sigma,sigmaMax,N1,N2,N3
+		)
+	
+def ACF_DD(
+	np.ndarray[double, ndim=1, mode="c"] X not None,
+	np.ndarray[double, ndim=1, mode="c"] Y not None,
+	np.ndarray[double, ndim=1, mode="c"] Z not None,
+	np.ndarray[double, ndim=1, mode="c"] JN_Random not None,
+	np.ndarray[double, ndim=1, mode="c"] gg not None,
+	double NBin,
+	int iNBin,
+	double LIMIT,
+	double Xmin, 
+	double Xmax, 
+	double Lbox,
+	int JN,
+	int NCPU, 
+	int CPU):
+	
+	ACF_DD_C(
+		<double*> np.PyArray_DATA(X),
+		<double*> np.PyArray_DATA(Y),
+		<double*> np.PyArray_DATA(Z),
+		<double*> np.PyArray_DATA(JN_Random),
+		<double*> np.PyArray_DATA(gg),
+		len(X),NBin,iNBin,LIMIT,Xmin,Xmax,Lbox,JN,NCPU,CPU)

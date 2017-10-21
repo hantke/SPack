@@ -6,6 +6,28 @@ int Index_C(double x, double Xmin, double Xmax, int NBin){
 double Line_C(double x,double X1,double X2,double Y1,double Y2){
 	return (Y2-Y1)/(X2-X1)*(x-X1)+Y1;
 }
+int imin(int a,int b){
+	if (a<b) return a;
+	return b;
+}
+int imax(int a,int b){
+	if (a>b) return a;
+	return b;
+}
+float min(float a,float b){
+	if (a<b) return a;
+	return b;
+}
+float max(float a,float b){
+	if (a>b) return a;
+	return b;
+}
+int iLimit(int x,int iNBin){
+	if (x < 0)	return x+iNBin;
+	if (x > iNBin-1)	return x-iNBin;
+	return x;
+	
+}
 //
 
 
@@ -29,7 +51,7 @@ void HOD_Group_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat1, double 
 	int i,index;
 	for(i = 0; i < NHalos; i++){
 		
-		index = Index(Halo_Mass[i], Xmin, Xmax, NBin);
+		index = Index_C(Halo_Mass[i], Xmin, Xmax, NBin);
 		if (index > -1 && index < NBin){
 			HOD_NHalo[index] = HOD_NHalo[index]+1;
 			HOD_Full[index] = HOD_Full[index] + Halo_NGal_Full[i];
@@ -48,10 +70,114 @@ void HOD_Group_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat1, double 
 	
 }
 
+int from3Dto1Dindex_C(int i1,int i2, int i3, int N1, int N2, int N3){
+	return i1 + i2*N1 + i3*N1*N2;
+}
+
+void Gaussian_Smooth_CIC_C(double * A,double * B, double sigma, int sigmaMax, int N1, int N2, int N3){
+	int i,j,k,ii,jj,kk,imin,imax,jmin,jmax,kmin,kmax,index1,index2;
+	float D2;
+	float norm = sqrt(2*3.14159265);
+	
+	for (i=0;i<N1;i++){
+		for(j=0;j<N2;j++){
+			for(k=0;k<N3;k++){
+				
+				index1 = from3Dto1Dindex_C(i,j,k,N1,N2,N3);
+				
+				imin = (int) max(0,i-sigma*sigmaMax);
+				jmin = (int) max(0,j-sigma*sigmaMax);
+				kmin = (int) max(0,k-sigma*sigmaMax);
+				
+				imax = (int) min(N1,i+sigma*sigmaMax+1);
+				jmax = (int) min(N2,j+sigma*sigmaMax+1);
+				kmax = (int) min(N3,k+sigma*sigmaMax+1);
+				if (A[index1] > 0){
+					for (ii=imin;ii<imax;ii++){
+						for(jj=jmin;jj<jmax;jj++){
+							for(kk=kmin;kk<kmax;kk++){
+								index2 = from3Dto1Dindex_C(ii,jj,kk,N1,N2,N3);
+								D2 = (i-ii)*(i-ii)+(j-jj)*(j-jj)+(k-kk)*(k-kk);
+								B[index2]+= A[index1]/(sigma*norm)*exp(-0.5*D2/sigma/sigma);
+							}
+						}
+					}	
+				}
+			}
+		}
+	}
+}
+
+void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmin, double Xmax, double Lbox,int JN, int NCPU, int CPU){
+	printf("Main Information: %f %f %f %f %f %d %d %d\n\n",N,NBin,Xmax,Xmin,Lbox,NCPU,CPU,JN);
+	/////////////////////////////// Init var
+	int i,j,k,index,x,y,z,tx,ty,tz,iLIMIT2,iLIMIT3,JN_Index,first = -99;
+	double LgDis,dx,dy,dz;
+	double binsize_i = NBin/( Xmax - Xmin);
+	float Lbox2 = Lbox/2;
+	int iLIMIT = (int) (LIMIT/Lbox*iNBin);
+	int iMin = (int)( N*(CPU-1.)/ (float) NCPU);
+	int iMax = (int)( N*(CPU)/ (float) NCPU);
+	/////////////////////////////// 	Linking List
+	int * ll;
+	int * ix;
+	int * iy;
+	int * iz;
+	ll = (int*) calloc (N,sizeof(int));
+	ix = (int*) calloc (N,sizeof(int));
+	iy = (int*) calloc (N,sizeof(int));
+	iz = (int*) calloc (N,sizeof(int));
+	int lfirst [iNBin][iNBin][iNBin];
+	for (i = 0;i < iNBin; i++) for (j = 0;j < iNBin; j++) for (k = 0;k < iNBin; k++)	lfirst[i][j][k] = -99;
+		for (i = 0;i < N; i++){
+		ix[i] = (int) (X[i]/Lbox*iNBin);
+		iy[i] = (int) (Y[i]/Lbox*iNBin);
+		iz[i] = (int) (Z[i]/Lbox*iNBin);
+		lfirst[ix[i]][iy[i]][iz[i]]=i;
+	}
+	for (i = 0;i < N; i++){
+		ll[i] = lfirst[ix[i]][iy[i]][iz[i]];
+		lfirst[ix[i]][iy[i]][iz[i]]=i;
+	}
+	/////////////////////////////// 	Linking List
+	
+	for(i = iMin; i < iMax; i++){
+		JN_Index = JN_Random[i];
+		if (i% (int) (N/100) == 0)	printf("%f\n",100.0* (float) i/(float) N );
+		for(tx = ix[i]-iLIMIT; tx < ix[i]+iLIMIT+1;tx++){
+			iLIMIT2 = (int) sqrt( (float) (iLIMIT*iLIMIT) - (ix[i] - tx)*(ix[i] - tx)  );
+			for(ty = iy[i]-iLIMIT2; ty < iy[i]+iLIMIT2+1;ty++){
+				iLIMIT3 = (int) sqrt( (float) (iLIMIT*iLIMIT) - (ix[i] - tx)*(ix[i] - tx) - (iy[i] - ty)*(iy[i] - ty));
+				for(tz = iz[i]-iLIMIT3; tz < iz[i]+iLIMIT3+1;tz++){
+					x = iLimit(tx,iNBin);
+					y = iLimit(ty,iNBin);
+					z = iLimit(tz,iNBin);
+					j=lfirst[x][y][z];
+					while (j != -99 && first != j){
+						dx = fabs( X[j] -  X[i]);
+						dy = fabs( Y[j] -  Y[i]);
+						dz = fabs( Z[j] -  Z[i]);
+						if (dx > Lbox2)	dx = Lbox - dx;
+						if (dy > Lbox2)	dy = Lbox - dy;
+						if (dz > Lbox2)	dz = Lbox - dz;
+						LgDis = log10(dx*dx+dy*dy+dz*dz+1e-10)/2.;
+						index = (int) ((LgDis-Xmin)*binsize_i);
+						if (index > -1 && index < NBin)	gg[index* (int) JN +JN_Index] += 1;
+						j = ll[j];
+						first = lfirst[x][y][z];
+					}
+				}
+			}
+		}
+			
+	}
+}
+
 
 // TEST!!!!!
+
 void Vel_1D_C(double * X, double * Y, double * Z, double * VZ, double * gv,double * gv_pc, double * gg,double * gg_pc, long * Prim_ID , long * Sec_ID, long * Main_Des_ID , int Prim_N, int Sec_N,int N, double NBin, int iNBin, double LIMIT, double Xmax, double Xmin, double Lbox, int NCPU, int CPU){
-	printf("Main Information: %d %f %f %f %f %d %d %d %d \n\n",N,NBin,Xmax,Xmin,Lbox,NCPU,CPU,iNBin);
+/*	printf("Main Information: %d %f %f %f %f %d %d %d %d \n\n",N,NBin,Xmax,Xmin,Lbox,NCPU,CPU,iNBin);
 	int i,j,k,i0,index,x,y,z,tx,ty,tz,dvx,dvy,dvz,iLIMIT2,JN_Index,index_dis,first = -99;
 	/////////////////%TODO ADD INT LIST OF PRIM AND SEC
 	int * ll;
@@ -143,7 +269,7 @@ void Vel_1D_C(double * X, double * Y, double * Z, double * VZ, double * gv,doubl
 			}
 		}
 			
-	}
+	}*/
 }
 /*
 long * Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N){

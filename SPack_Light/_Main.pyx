@@ -14,6 +14,8 @@ cdef extern from "Main.h":
 	double FuncSingle_C(double x0,double * X,double * Y,int N)
 	
 	double * FuncArr_C(double * X0,double * X,double * Y,int N,int N_Arr)
+	
+	double * AcumMassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal)
 # create the wrapper code, with numpy type annotations
 
 def Line(
@@ -53,6 +55,15 @@ def FuncArr(
 	return A
 	
 
-
+def AcumMassFunction(
+	np.ndarray[double, ndim=1, mode="c"] M not None,
+	double Mmin, double Mmax, double Volume, int NBin):
+	
+	Val = AcumMassFunction_C(
+	<double*> np.PyArray_DATA(M),
+	Mmin,Mmax,Volume,NBin,len(M))
+	A = []
+	for i in range(len(M)): A.append(Val[i])
+	return A
 
 
