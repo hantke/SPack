@@ -154,17 +154,20 @@ void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * g
 					z = iLimit(tz,iNBin);
 					j=lfirst[x][y][z];
 					while (j != -99 && first != j){
-						dx = fabs( X[j] -  X[i]);
-						dy = fabs( Y[j] -  Y[i]);
-						dz = fabs( Z[j] -  Z[i]);
-						if (dx > Lbox2)	dx = Lbox - dx;
-						if (dy > Lbox2)	dy = Lbox - dy;
-						if (dz > Lbox2)	dz = Lbox - dz;
-						LgDis = log10(dx*dx+dy*dy+dz*dz+1e-10)/2.;
-						index = (int) ((LgDis-Xmin)*binsize_i);
-						if (index > -1 && index < NBin)	gg[index* (int) JN +JN_Index] += 1;
+						if (i>j){	
+							dx = fabs( X[j] -  X[i]);
+							dy = fabs( Y[j] -  Y[i]);
+							dz = fabs( Z[j] -  Z[i]);
+							if (dx > Lbox2)	dx = Lbox - dx;
+							if (dy > Lbox2)	dy = Lbox - dy;
+							if (dz > Lbox2)	dz = Lbox - dz;
+							LgDis = log10(dx*dx+dy*dy+dz*dz+1e-10)/2.;
+							index = (int) ((LgDis-Xmin)*binsize_i);
+							if (index > -1 && index < NBin)	gg[index* (int) JN +JN_Index] += 1;
+						}
 						j = ll[j];
 						first = lfirst[x][y][z];
+						
 					}
 				}
 			}

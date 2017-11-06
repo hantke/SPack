@@ -16,6 +16,8 @@ cdef extern from "Main.h":
 	double * FuncArr_C(double * X0,double * X,double * Y,int N,int N_Arr)
 	
 	double * AcumMassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal)
+	
+	void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N);
 # create the wrapper code, with numpy type annotations
 
 def Line(
@@ -66,4 +68,17 @@ def AcumMassFunction(
 	for i in range(len(M)): A.append(Val[i])
 	return A
 
+def Histo2D(
+	np.ndarray[long, ndim=1, mode="c"] Arr not None,
+	np.ndarray[double, ndim=1, mode="c"] X not None,
+	np.ndarray[double, ndim=1, mode="c"] Y not None,
+	double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b):
+	
+	Histo2D_C(
+	<long*> np.PyArray_DATA(Arr),
+	<double*> np.PyArray_DATA(X),
+	<double*> np.PyArray_DATA(Y),
+	Xa_min,Xa_max,Xb_min,Xb_max, NBin_a, NBin_b, len(X))
 
+
+#Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N)

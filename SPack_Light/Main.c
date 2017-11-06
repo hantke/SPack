@@ -56,6 +56,18 @@ double * AcumMassFunction_C(double * M, double Mmin, double Mmax, double Volume,
     return Arr;
 }
 
+void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N){
+	int i,index,index_a,index_b;
+	int NBin = NBin_a*NBin_b;
+	
+	for (i=0;i<N;i++){
+		index_a = (int) ((X[i] - Xa_min)/(Xa_max-Xa_min)*(double) NBin_a);
+		index_b = (int) ((Y[i] - Xb_min)/(Xb_max-Xb_min)*(double) NBin_b);
+		index = index_a*NBin_b+index_b;
+		if ((index > -1) && (index < NBin))	Arr[index]++;
+	}
+}
+
 
 // TEST THESE ONES!
 
@@ -85,24 +97,6 @@ long * Histo_C(double * X,double Xmin, double Xmax, int NBin, long N){
 	
 	for (i=0;i<N;i++){
 		index = (int) ((X[i] - Xmin)/(Xmax-Xmin)*(double) NBin);
-		if ((index > -1) && (index < NBin))	Arr[index]++;
-	}
-	
-	return Arr;
-}
-
-long * Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N){
-	int i,index,index_a,index_b;
-	int NBin = NBin_a*NBin_b;
-	long * Arr;
-	Arr = (long*) calloc (NBin,sizeof(long));
-	
-	for (i=0;i<NBin;i++) Arr[i] = 0;
-	
-	for (i=0;i<N;i++){
-		index_a = (int) ((X[i] - Xa_min)/(Xa_max-Xa_min)*(double) NBin_a);
-		index_b = (int) ((X[i] - Xb_min)/(Xb_max-Xb_min)*(double) NBin_b);
-		index = index_a*NBin_b+NBin_b;
 		if ((index > -1) && (index < NBin))	Arr[index]++;
 	}
 	
