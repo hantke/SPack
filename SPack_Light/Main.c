@@ -7,6 +7,14 @@ int Index_C(double x, double Xmin, double Xmax, int NBin){
 
 //
 
+double Dist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2){
+	return sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1));
+}
+
+double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2){
+	return log10((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1))/2.;
+}
+
 double Line_C(double x,double X1,double X2,double Y1,double Y2){
 	return (Y2-Y1)/(X2-X1)*(x-X1)+Y1;
 }
@@ -56,6 +64,25 @@ double * AcumMassFunction_C(double * M, double Mmin, double Mmax, double Volume,
     return Arr;
 }
 
+double * MassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal){
+    int i,index;
+    double * Arr;
+	Arr = (double*) calloc (NBin,sizeof(double));
+    for(i=0;i<NBin;i++) Arr[i] = 0;
+    for(i=0;i<NGal;i++){
+        index = Index_C(M[i], Mmin, Mmax, NBin);
+        if (index >= 0 && index < NBin){
+            Arr[index] += 1;
+        }
+    }
+    
+    
+    for(i=0;i<NBin;i++){
+        Arr[i] /= (Volume*(Mmax-Mmin)/NBin);
+    }
+    return Arr;
+}
+
 void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N){
 	int i,index,index_a,index_b;
 	int NBin = NBin_a*NBin_b;
@@ -71,22 +98,22 @@ void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max
 
 // TEST THESE ONES!
 
-double * MassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal){
-    int i,index;
-    double * Arr;
-	Arr = (double*) calloc (NBin,sizeof(double));
-    for(i=0;i<NBin;i++) Arr[i] = 0;
-    for(i=0;i<NGal;i++){
-        index = Index_C(M[i], Mmin, Mmax, NBin);
-        if (index >= 0 && index < NBin){
-            Arr[index] += 1;
-        }
-    }
-    for(i=0;i<NBin;i++){
-        Arr[i] /= ((Mmax-Mmin)/NBin*Volume);
-    }
-    return Arr;
-}
+// double * MassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal){
+//     int i,index;
+//     double * Arr;
+// 	Arr = (double*) calloc (NBin,sizeof(double));
+//     for(i=0;i<NBin;i++) Arr[i] = 0;
+//     for(i=0;i<NGal;i++){
+//         index = Index_C(M[i], Mmin, Mmax, NBin);
+//         if (index >= 0 && index < NBin){
+//             Arr[index] += 1;
+//         }
+//     }
+//     for(i=0;i<NBin;i++){
+//         Arr[i] /= ((Mmax-Mmin)/NBin*Volume);
+//     }
+//     return Arr;
+// }
 
 long * Histo_C(double * X,double Xmin, double Xmax, int NBin, long N){
 	int i,index;

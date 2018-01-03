@@ -9,6 +9,8 @@ np.import_array()
 
 # cdefine the signature of our c function
 cdef extern from "Main.h":
+	int Index_C(double x, double Xmin, double Xmax, int NBin)	
+	
 	double Line_C(double x,double X1,double X2,double Y1,double Y2)
 	
 	double FuncSingle_C(double x0,double * X,double * Y,int N)
@@ -17,8 +19,17 @@ cdef extern from "Main.h":
 	
 	double * AcumMassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal)
 	
-	void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N);
+	double * MassFunction_C(double * M, double Mmin, double Mmax, double Volume, int NBin, int NGal)
+	void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N)
+	
+	double Dist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2)
+	
+	double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2)
+
 # create the wrapper code, with numpy type annotations
+
+def Index(double x, double Xmin, double Xmax, int NBin):
+	return Index_C(x, Xmin, Xmax, NBin)
 
 def Line(
 	double x,
@@ -65,7 +76,18 @@ def AcumMassFunction(
 	<double*> np.PyArray_DATA(M),
 	Mmin,Mmax,Volume,NBin,len(M))
 	A = []
-	for i in range(len(M)): A.append(Val[i])
+	for i in range(NBin): A.append(Val[i])
+	return A
+
+def MassFunction(
+	np.ndarray[double, ndim=1, mode="c"] M not None,
+	double Mmin, double Mmax, double Volume, int NBin):
+	
+	Val = MassFunction_C(
+	<double*> np.PyArray_DATA(M),
+	Mmin,Mmax,Volume,NBin,len(M))
+	A = []
+	for i in range(NBin): A.append(Val[i])
 	return A
 
 def Histo2D(
@@ -80,5 +102,10 @@ def Histo2D(
 	<double*> np.PyArray_DATA(Y),
 	Xa_min,Xa_max,Xb_min,Xb_max, NBin_a, NBin_b, len(X))
 
+def Dist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):
+	return Dist3D_C(X1,Y1,Z1,X2,Y2,Z2)
+
+def LogDist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):
+	return LogDist3D_C(X1,Y1,Z1,X2,Y2,Z2)
 
 #Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N)
