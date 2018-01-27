@@ -25,6 +25,10 @@ cdef extern from "Main.h":
 	double Dist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2)
 	
 	double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2)
+	
+	double Dist2D_C(double X1,double Y1,double X2,double Y2)
+
+	double LogDist2D_C(double X1,double Y1,double X2,double Y2)
 
 # create the wrapper code, with numpy type annotations
 
@@ -102,10 +106,11 @@ def Histo2D(
 	<double*> np.PyArray_DATA(Y),
 	Xa_min,Xa_max,Xb_min,Xb_max, NBin_a, NBin_b, len(X))
 
-def Dist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):
-	return Dist3D_C(X1,Y1,Z1,X2,Y2,Z2)
+def Dist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):	return Dist3D_C(X1,Y1,Z1,X2,Y2,Z2)
 
-def LogDist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):
-	return LogDist3D_C(X1,Y1,Z1,X2,Y2,Z2)
+def LogDist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):	return LogDist3D_C(X1,Y1,Z1,X2,Y2,Z2)
 
+def Dist2D(double X1,double Y1,double X2,double Y2):	return Dist2D_C(X1,Y1,X2,Y2)
+
+def LogDist2D(double X1,double Y1,double X2,double Y2):	return LogDist2D_C(X1,Y1,X2,Y2)
 #Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N)

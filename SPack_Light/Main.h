@@ -15,3 +15,7 @@ void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max
 double Dist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2);
 
 double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2);
+
+double Dist2D_C(double X1,double Y1,double X2,double Y2);
+
+double LogDist2D_C(double X1,double Y1,double X2,double Y2);

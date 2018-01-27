@@ -1,7 +1,0 @@
-setup.py
-NewSubFind.egg-info/PKG-INFO
-NewSubFind.egg-info/SOURCES.txt
-NewSubFind.egg-info/dependency_links.txt
-NewSubFind.egg-info/not-zip-safe
-NewSubFind.egg-info/requires.txt
-NewSubFind.egg-info/top_level.txt

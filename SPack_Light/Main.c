@@ -14,6 +14,13 @@ double Dist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2){
 double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2){
 	return log10((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1))/2.;
 }
+double Dist2D_C(double X1,double Y1,double X2,double Y2){
+	return sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1));
+}
+
+double LogDist2D_C(double X1,double Y1,double X2,double Y2){
+	return log10((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1))/2.; 
+}
 
 double Line_C(double x,double X1,double X2,double Y1,double Y2){
 	return (Y2-Y1)/(X2-X1)*(x-X1)+Y1;

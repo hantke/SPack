@@ -20,6 +20,10 @@ cdef extern from "Main.h":
 	void Gaussian_Smooth_CIC_C(double * A,double * B, double sigma, int sigmaMax, int N1, int N2, int N3)
 	
 	void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmax, double Xmin, double Lbox,int JN, int NCPU, int CPU)
+	
+	void Halo_Population_simple_C(long * Halo_NGal_All,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Gal_Prop,long * Gal_type, double Cut, int NGal)
+	
+	void HOD_Group_simple_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat,double * HOD_NHalo, long * Halo_NGal_Full,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Halo_Mass, int NHalos, double Xmin, double Xmax, double NBin)
 # create the wrapper code, with numpy type annotations
 
 def Line(
@@ -109,6 +113,43 @@ def HOD_Group(
 		<double*>  np.PyArray_DATA(Halo_Mass),
 		NHalos, Xmin, Xmax, NBin)
 
+def Halo_Population_simple(
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_All  not None,
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_Cen  not None,
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_Sat  not None,\
+	np.ndarray[double, ndim=1, mode="c"] Gal_Prop     not None,
+	np.ndarray[long, ndim=1, mode="c"] Gal_type       not None,
+	double Cut):
+	
+	Halo_Population_simple_C(
+		<long*>    np.PyArray_DATA(Halo_NGal_All),
+		<long*>    np.PyArray_DATA(Halo_NGal_Cen),
+		<long*>    np.PyArray_DATA(Halo_NGal_Sat),
+		<double*> np.PyArray_DATA(Gal_Prop),
+		<long*>    np.PyArray_DATA(Gal_type),
+		Cut,len(Gal_Prop))
+
+def HOD_Group_simple(
+	np.ndarray[double, ndim=1, mode="c"] HOD_Full       not None,
+	np.ndarray[double, ndim=1, mode="c"] HOD_Cen        not None,
+	np.ndarray[double, ndim=1, mode="c"] HOD_Sat       not None,
+	np.ndarray[double, ndim=1, mode="c"] HOD_NHalo       not None,
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_Full not None,
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_Cen  not None,
+	np.ndarray[long, ndim=1, mode="c"] Halo_NGal_Sat not None,
+	np.ndarray[double, ndim=1, mode="c"] Halo_Mass    not None,
+	int NHalos, double Xmin, double Xmax, double NBin):
+	
+	HOD_Group_simple_C(
+		<double*>    np.PyArray_DATA(HOD_Full),
+		<double*>    np.PyArray_DATA(HOD_Cen),
+		<double*>    np.PyArray_DATA(HOD_Sat),
+		<double*>    np.PyArray_DATA(HOD_NHalo),
+		<long*>    np.PyArray_DATA(Halo_NGal_Full),
+		<long*>    np.PyArray_DATA(Halo_NGal_Cen),
+		<long*>    np.PyArray_DATA(Halo_NGal_Sat),
+		<double*>  np.PyArray_DATA(Halo_Mass),
+		NHalos, Xmin, Xmax, NBin)
 
 def Gaussian_Smooth_CIC(
 	np.ndarray[double, ndim=1, mode="c"] A       not None,

@@ -30,7 +30,21 @@ int iLimit(int x,int iNBin){
 }
 //
 
-
+//Used on Contreras et al. 2018 Zehavi et al. in Prep.
+void Halo_Population_simple_C(long * Halo_NGal_All,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Gal_Prop,long * Gal_type, double Cut, int NGal){	
+	int i=0;
+	int j=-1;
+	for (i=0;i < NGal;i++){
+		if (Gal_type[i] == 0) j++;
+		if (Gal_Prop[i] >= Cut){
+			if (Gal_type[i] == 0){
+				Halo_NGal_Cen[j]++;
+			}
+			else	Halo_NGal_Sat[j]++;
+			Halo_NGal_All[j]++;
+		}
+	}
+}
 
 void Halo_Population_C(long * Halo_NGal_All,long * Halo_NGal_Cen,long * Halo_NGal_Sat1,long * Halo_NGal_Sat2, long * Halo_ID,long * Gal_HaloID, double * Gal_Prop,long * Gal_type, double Cut, int NGal){	
 	int i=0;
@@ -65,6 +79,28 @@ void HOD_Group_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat1, double 
 		HOD_Cen[index] = HOD_Cen[index]   / (HOD_NHalo[index] + 1e-10);
 		HOD_Sat1[index] = HOD_Sat1[index] / (HOD_NHalo[index] + 1e-10);
 		HOD_Sat2[index] = HOD_Sat2[index] / (HOD_NHalo[index] + 1e-10);
+		
+	}
+	
+}
+
+//Used on Contreras et al. 2018 Zehavi et al. in Prep.
+void HOD_Group_simple_C(double * HOD_Full, double * HOD_Cen, double * HOD_Sat,double * HOD_NHalo, long * Halo_NGal_Full,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Halo_Mass, int NHalos, double Xmin, double Xmax, double NBin){
+	int i,index;
+	for(i = 0; i < NHalos; i++){
+		
+		index = Index_C(Halo_Mass[i], Xmin, Xmax, NBin);
+		if (index > -1 && index < NBin){
+			HOD_NHalo[index] = HOD_NHalo[index]+1;
+			HOD_Full[index] = HOD_Full[index] + Halo_NGal_Full[i];
+			HOD_Cen[index] = HOD_Cen[index] + Halo_NGal_Cen[i];
+			HOD_Sat[index] = HOD_Sat[index] + Halo_NGal_Sat[i];
+		}
+	}
+	for(index = 0; index < NBin; index++){
+		HOD_Full[index] = HOD_Full[index] / (HOD_NHalo[index] + 1e-10);
+		HOD_Cen[index] = HOD_Cen[index]   / (HOD_NHalo[index] + 1e-10);
+		HOD_Sat[index] = HOD_Sat[index] / (HOD_NHalo[index] + 1e-10);
 		
 	}
 	
