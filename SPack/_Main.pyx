@@ -19,7 +19,7 @@ cdef extern from "Main.h":
 	
 	void Gaussian_Smooth_CIC_C(double * A,double * B, double sigma, int sigmaMax, int N1, int N2, int N3)
 	
-	void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmax, double Xmin, double Lbox,int JN, int NCPU, int CPU)
+	void ACF_DD_C(double * X, double * Y, double * Z, long * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmax, double Xmin, double Lbox,int JN, int NCPU, int CPU)
 	
 	void Halo_Population_simple_C(long * Halo_NGal_All,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Gal_Prop,long * Gal_type, double Cut, int NGal)
 	
@@ -166,7 +166,7 @@ def ACF_DD(
 	np.ndarray[double, ndim=1, mode="c"] X not None,
 	np.ndarray[double, ndim=1, mode="c"] Y not None,
 	np.ndarray[double, ndim=1, mode="c"] Z not None,
-	np.ndarray[double, ndim=1, mode="c"] JN_Random not None,
+	np.ndarray[long, ndim=1, mode="c"] JN_Random not None,
 	np.ndarray[double, ndim=1, mode="c"] gg not None,
 	double NBin,
 	int iNBin,
@@ -182,6 +182,6 @@ def ACF_DD(
 		<double*> np.PyArray_DATA(X),
 		<double*> np.PyArray_DATA(Y),
 		<double*> np.PyArray_DATA(Z),
-		<double*> np.PyArray_DATA(JN_Random),
+		<long*> np.PyArray_DATA(JN_Random),
 		<double*> np.PyArray_DATA(gg),
 		len(X),NBin,iNBin,LIMIT,Xmin,Xmax,Lbox,JN,NCPU,CPU)

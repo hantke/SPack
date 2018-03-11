@@ -9,7 +9,8 @@ np.import_array()
 
 # cdefine the signature of our c function
 cdef extern from "Main.h":
-	double Tdf_NFW_C(double M_c, double M_s, double jmin,double epsilon,double alpha, double dt, double MAX, int verbose)
+	double Tdf_NFW_C(double M_c, double M_s, double jmin,double epsilon,double alpha, double dt, double MAX, double dt_print, int verbose)
+	double * jM_eV_NFW_C(double M_c, double M_s, double jmin,double epsilon,double alpha, double dt, double MAX, double dt_print, int verbose)
 # create the wrapper code, with numpy type annotations
 
 def Tdf_NFW(
@@ -21,5 +22,23 @@ def Tdf_NFW(
     double dt, 
     double MAX, 
     int verbose):
-	Val = Tdf_NFW_C( M_c,  M_s,  jmin, epsilon, alpha,  dt,  MAX, verbose)
+	dt_print = 0.1
+	Val = Tdf_NFW_C( M_c,  M_s,  jmin, epsilon, alpha,  dt,  MAX, dt_print, verbose)
 	return Val
+
+def jM_eV_NFW(
+    double M_c, 
+    double M_s, 
+    double jmin,
+    double epsilon,
+    double alpha, 
+    double dt, 
+    double MAX, 
+    int verbose):
+	dt_print = 0.1
+	Val = jM_eV_NFW_C( M_c,  M_s,  jmin, epsilon, alpha,  dt,  MAX, dt_print, verbose)
+	A = []
+	Len = int(MAX/dt_print)
+	for i in range(3*Len):
+		if Val[i%Len] >= 0: A.append(Val[i])
+	return A

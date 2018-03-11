@@ -29,8 +29,13 @@ cdef extern from "Main.h":
 	double Dist2D_C(double X1,double Y1,double X2,double Y2)
 
 	double LogDist2D_C(double X1,double Y1,double X2,double Y2)
+	
+	void Histo_C(double * X, long * Arr, double Xmin, double Xmax, int NBin, long N)
 
 # create the wrapper code, with numpy type annotations
+
+
+
 
 def Index(double x, double Xmin, double Xmax, int NBin):
 	return Index_C(x, Xmin, Xmax, NBin)
@@ -113,4 +118,14 @@ def LogDist3D(double X1,double Y1,double Z1,double X2,double Y2,double Z2):	retu
 def Dist2D(double X1,double Y1,double X2,double Y2):	return Dist2D_C(X1,Y1,X2,Y2)
 
 def LogDist2D(double X1,double Y1,double X2,double Y2):	return LogDist2D_C(X1,Y1,X2,Y2)
+
+def Histo(
+	np.ndarray[double, ndim=1, mode="c"] X not None,
+	np.ndarray[long, ndim=1, mode="c"] Arr not None,
+	double Xmin, double Xmax, int NBin):
+	
+	Histo_C(
+	<double*> np.PyArray_DATA(X),
+	<long*>   np.PyArray_DATA(Arr),
+	Xmin,Xmax,NBin,len(X))
 #Histo2D_C(double * X,double Xa_min, double Xa_max,double Xb_min, double Xb_max, int NBin_a, int NBin_b, long N)

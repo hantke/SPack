@@ -100,8 +100,17 @@ void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max
 		index = index_a*NBin_b+index_b;
 		if ((index > -1) && (index < NBin))	Arr[index]++;
 	}
-}
+}//CAREFULL VOID * ??
 
+void Histo_C(double * X, long * Arr, double Xmin, double Xmax, int NBin, long N){
+	int i,index;	
+// 	for (i=0;i<NBin;i++) Arr[i] = 0;
+	for (i=0;i<N;i++){
+		index = (int) ((X[i] - Xmin)/(Xmax-Xmin)*(double) NBin);
+		if ((index > -1) && (index < NBin))	Arr[index]++;
+	}
+	return Arr;
+}
 
 // TEST THESE ONES!
 
@@ -122,17 +131,4 @@ void * Histo2D_C(long * Arr, double * X, double * Y,double Xa_min, double Xa_max
 //     return Arr;
 // }
 
-long * Histo_C(double * X,double Xmin, double Xmax, int NBin, long N){
-	int i,index;
-	long * Arr;
-	Arr = (long*) calloc (NBin,sizeof(long));
-	
-	for (i=0;i<NBin;i++) Arr[i] = 0;
-	
-	for (i=0;i<N;i++){
-		index = (int) ((X[i] - Xmin)/(Xmax-Xmin)*(double) NBin);
-		if ((index > -1) && (index < NBin))	Arr[index]++;
-	}
-	
-	return Arr;
-}
+

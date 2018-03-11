@@ -6,7 +6,7 @@ setup(
     cmdclass={'build_ext': build_ext},
     ext_modules=[Extension("SPack",
                  sources=["_Main.pyx", "Main.c"],
-                 include_dirs=[numpy.get_include()])],
+                 include_dirs=[numpy.get_include()])], 
   )
 #python setup.py build_ext --inplace
 #python setup.py install --user

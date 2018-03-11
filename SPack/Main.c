@@ -30,6 +30,54 @@ int iLimit(int x,int iNBin){
 }
 //
 
+/////// Find elment of a table A in a table B
+
+long Find_ainA_C(int a, long * A, int a0, int a1, int LenA){
+	if(a1-a0<3){
+		int t=a0;
+		while(t <= a1 && t < LenA){
+			if (a == A[t]) return t;
+			t++;
+		}
+		return -99;
+	}
+	int med = (a1+a0)/2;
+		
+		
+	
+	
+}
+
+// def Find_ainA(a,A,a0,a1):#Look for a in Y-Table, initial a0,a1 = 0, len(A-1)
+// 	if a1 - a0 < 3:
+// 		t = a0
+// 		while t <= a1 and t < len(A):
+// 			if a == A[t]:	return t
+// 			t += 1
+// 		return -99	
+// 	med = (a1+a0)/2
+// 	if a < A[med]:	return Find_ainA(a,A,a0,med)
+// 	if a > A[med]:	return Find_ainA(a,A,med,a1)
+// 	return med	
+// 
+// def Find_AinB(A, B):# Only if A is complete in B
+// 	b=max(0,Find_ainA(A[0],B,0,len(B)-1)-1)
+// 	a = 0
+// 	#b=0
+// 	index = []
+// 	while a<len(A):
+// 		if (A[a] < B[b]) or (len(B)<b):
+// 			print 'warning', a, b, A[a], B[b]
+// 			return -1
+// 		#if b%1000000==0: print a, b, A[a], B[b]
+// 		if A[a]== B[b]:
+// 			index.append(b)
+// 			a+=1
+// 		b+=1
+// 	return np.array(index)
+
+//////
+
 //Used on Contreras et al. 2018 Zehavi et al. in Prep.
 void Halo_Population_simple_C(long * Halo_NGal_All,long * Halo_NGal_Cen,long * Halo_NGal_Sat, double * Gal_Prop,long * Gal_type, double Cut, int NGal){	
 	int i=0;
@@ -144,7 +192,7 @@ void Gaussian_Smooth_CIC_C(double * A,double * B, double sigma, int sigmaMax, in
 	}
 }
 
-void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmin, double Xmax, double Lbox,int JN, int NCPU, int CPU){
+void ACF_DD_C(double * X, double * Y, double * Z, long * JN_Random, double * gg,double N, double NBin, int iNBin, double LIMIT, double Xmin, double Xmax, double Lbox,int JN, int NCPU, int CPU){
 	printf("Main Information: %f %f %f %f %f %d %d %d\n\n",N,NBin,Xmax,Xmin,Lbox,NCPU,CPU,JN);
 	/////////////////////////////// Init var
 	int i,j,k,index,x,y,z,tx,ty,tz,iLIMIT2,iLIMIT3,JN_Index,first = -99;
@@ -152,6 +200,7 @@ void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * g
 	double binsize_i = NBin/( Xmax - Xmin);
 	float Lbox2 = Lbox/2;
 	int iLIMIT = (int) (LIMIT/Lbox*iNBin);
+	printf("%d\n",iLIMIT);
 	int iMin = (int)( N*(CPU-1.)/ (float) NCPU);
 	int iMax = (int)( N*(CPU)/ (float) NCPU);
 	/////////////////////////////// 	Linking List
@@ -179,12 +228,12 @@ void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * g
 	
 	for(i = iMin; i < iMax; i++){
 		JN_Index = JN_Random[i];
-		if (i% (int) (N/100) == 0)	printf("%f\n",100.0* (float) i/(float) N );
+// 		if (i% (int) (N/100) == 0)	printf("%f\n",100.0* (float) i/(float) N );
 		for(tx = ix[i]-iLIMIT; tx < ix[i]+iLIMIT+1;tx++){
 			iLIMIT2 = (int) sqrt( (float) (iLIMIT*iLIMIT) - (ix[i] - tx)*(ix[i] - tx)  );
 			for(ty = iy[i]-iLIMIT2; ty < iy[i]+iLIMIT2+1;ty++){
-				iLIMIT3 = (int) sqrt( (float) (iLIMIT*iLIMIT) - (ix[i] - tx)*(ix[i] - tx) - (iy[i] - ty)*(iy[i] - ty));
-				for(tz = iz[i]-iLIMIT3; tz < iz[i]+iLIMIT3+1;tz++){
+// 				iLIMIT3 = (int) sqrt( (float) (iLIMIT*iLIMIT) - (ix[i] - tx)*(ix[i] - tx) - (iy[i] - ty)*(iy[i] - ty));
+				for(tz = iz[i]-iLIMIT2; tz < iz[i]+iLIMIT2+1;tz++){
 					x = iLimit(tx,iNBin);
 					y = iLimit(ty,iNBin);
 					z = iLimit(tz,iNBin);
@@ -199,7 +248,7 @@ void ACF_DD_C(double * X, double * Y, double * Z, double * JN_Random, double * g
 							if (dz > Lbox2)	dz = Lbox - dz;
 							LgDis = log10(dx*dx+dy*dy+dz*dz+1e-10)/2.;
 							index = (int) ((LgDis-Xmin)*binsize_i);
-							if (index > -1 && index < NBin)	gg[index* (int) JN +JN_Index] += 1;
+							if (index > -1 && index < NBin)	gg[index +JN_Index* (int) NBin] += 1;
 						}
 						j = ll[j];
 						first = lfirst[x][y][z];

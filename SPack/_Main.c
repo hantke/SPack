@@ -3530,7 +3530,7 @@ static PyObject *__pyx_pf_5SPack_14ACF_DD(CYTHON_UNUSED PyObject *__pyx_self, Py
   __pyx_pybuffernd_Z.diminfo[0].strides = __pyx_pybuffernd_Z.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_Z.diminfo[0].shape = __pyx_pybuffernd_Z.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_JN_Random.rcbuffer->pybuffer, (PyObject*)__pyx_v_JN_Random, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_JN_Random.rcbuffer->pybuffer, (PyObject*)__pyx_v_JN_Random, &__Pyx_TypeInfo_long, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_pybuffernd_JN_Random.diminfo[0].strides = __pyx_pybuffernd_JN_Random.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_JN_Random.diminfo[0].shape = __pyx_pybuffernd_JN_Random.rcbuffer->pybuffer.shape[0];
   {
@@ -3540,7 +3540,7 @@ static PyObject *__pyx_pf_5SPack_14ACF_DD(CYTHON_UNUSED PyObject *__pyx_self, Py
   __pyx_pybuffernd_gg.diminfo[0].strides = __pyx_pybuffernd_gg.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_gg.diminfo[0].shape = __pyx_pybuffernd_gg.rcbuffer->pybuffer.shape[0];
 
   /* "_Main.pyx":187
- * 		<double*> np.PyArray_DATA(JN_Random),
+ * 		<long*> np.PyArray_DATA(JN_Random),
  * 		<double*> np.PyArray_DATA(gg),
  * 		len(X),NBin,iNBin,LIMIT,Xmin,Xmax,Lbox,JN,NCPU,CPU)             # <<<<<<<<<<<<<<
  */
@@ -3553,7 +3553,7 @@ static PyObject *__pyx_pf_5SPack_14ACF_DD(CYTHON_UNUSED PyObject *__pyx_self, Py
  * 		<double*> np.PyArray_DATA(X),
  * 		<double*> np.PyArray_DATA(Y),
  */
-  ACF_DD_C(((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_X))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_Y))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_Z))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_JN_Random))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_gg))), __pyx_t_1, __pyx_v_NBin, __pyx_v_iNBin, __pyx_v_LIMIT, __pyx_v_Xmin, __pyx_v_Xmax, __pyx_v_Lbox, __pyx_v_JN, __pyx_v_NCPU, __pyx_v_CPU);
+  ACF_DD_C(((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_X))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_Y))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_Z))), ((long *)PyArray_DATA(((PyArrayObject *)__pyx_v_JN_Random))), ((double *)PyArray_DATA(((PyArrayObject *)__pyx_v_gg))), __pyx_t_1, __pyx_v_NBin, __pyx_v_iNBin, __pyx_v_LIMIT, __pyx_v_Xmin, __pyx_v_Xmax, __pyx_v_Lbox, __pyx_v_JN, __pyx_v_NCPU, __pyx_v_CPU);
 
   /* "_Main.pyx":165
  * 		)

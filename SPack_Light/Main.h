@@ -19,3 +19,5 @@ double LogDist3D_C(double X1,double Y1,double Z1,double X2,double Y2,double Z2);
 double Dist2D_C(double X1,double Y1,double X2,double Y2);
 
 double LogDist2D_C(double X1,double Y1,double X2,double Y2);
+
+void Histo_C(double * X, long * Arr, double Xmin, double Xmax, int NBin, long N);

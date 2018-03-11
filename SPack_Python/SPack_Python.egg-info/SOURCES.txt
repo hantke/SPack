@@ -6,6 +6,8 @@ SPack_Python.egg-info/dependency_links.txt
 SPack_Python.egg-info/not-zip-safe
 SPack_Python.egg-info/requires.txt
 SPack_Python.egg-info/top_level.txt
+SPack_Python/Advance/Advance.py
+SPack_Python/Advance/__init__.py
 SPack_Python/Mate/Mate.py
 SPack_Python/Mate/__init__.py
 SPack_Python/Plot/Plot.py

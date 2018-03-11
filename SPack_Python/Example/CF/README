@@ -1,0 +1,5 @@
+select x,y,z    
+  from millimil..DeLucia2006a    
+ where snapnum=63    
+   and stellarMass > 0.1
+> data.txt
